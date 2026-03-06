@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>准备面试ing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 0 15px;
+        }
+
+        .container {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+
+        .form-group {
+            margin: 12px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button {
+            padding: 8px 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 3px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        .question-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 3px 6px;
+            background: #e9f5ff;
+            color: #007bff;
+            border-radius: 3px;
+            font-size: 12px;
+            margin-right: 5px;
+        }
+
+        .tag-important-high {
+            background: #f8d7da;
+            color: #dc3545;
+        }
+
+        .tag-important-mid {
+            background: #fff3cd;
+            color: #ffc107;
+        }
+
+        .tag-important-low {
+            background: #d1e7dd;
+            color: #198754;
+        }
+
+        .count {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+
+        .match-tip {
+            padding: 10px;
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin: 10px 0;
+        }
+
+        .search-box input {
+            flex: 1;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+            flex-wrap: wrap;
+        }
+
+        .filter-row select {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .edit-btn {
+            background: #198754;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+        }
+
+        .add-input-group {
+            display: flex;
+            gap: 8px;
+            align-items: end;
+        }
+
+        .add-input-group input {
+            flex: 1;
+        }
+
+        /* ===== 相似问题弹窗 ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #fff;
+            border-radius: 10px;
+            padding: 24px;
+            max-width: 540px;
+            width: 92%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+        }
+
+        .modal-box h3 {
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .modal-similar-card {
+            background: #f4f8ff;
+            border: 1px solid #c5d9f7;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 14px;
+            font-size: 13px;
+        }
+
+        .modal-similar-card .sim-score {
+            display: inline-block;
+            background: #fff3cd;
+            color: #856404;
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .modal-similar-card .sim-q {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .modal-similar-card .sim-a {
+            color: #555;
+        }
+
+        .modal-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .modal-actions button {
+            margin: 0;
+        }
+
+        .btn-merge {
+            background: #6f42c1;
+        }
+
+        .btn-merge:hover {
+            background: #57329d;
+        }
+
+        .btn-answer {
+            background: #0d6efd;
+        }
+
+        .btn-answer:hover {
+            background: #0a58ca;
+        }
+
+        .btn-link {
+            background: #198754;
+        }
+
+        .btn-link:hover {
+            background: #146c43;
+        }
+
+        .btn-new {
+            background: #6c757d;
+        }
+
+        .btn-new:hover {
+            background: #5a6268;
+        }
+
+        /* ===== 关联问题 ===== */
+        .related-item {
+            border-left: 3px solid #0d6efd;
+            margin-left: 24px;
+            margin-top: 6px;
+            padding: 10px 14px;
+            background: #f0f6ff;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+        }
+
+        .related-item h4 {
+            font-size: 13px;
+        }
+
+        .sync-status {
+            position: fixed;
+            top: 10px;
+            right: 15px;
+            font-size: 12px;
+            padding: 4px 12px;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 16px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            z-index: 999;
+            transition: color 0.3s;
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore-compat.js"></script>
+</head>
+
+<body>
+    <h1>准备面试ing</h1>
+    <span class="sync-status" id="syncStatus">连接中...</span>
+
+    <div class="container">
+        <h2>新增面试问题</h2>
+        <div class="form-group">
+            <label>面试问题</label>
+            <input type="text" id="question" placeholder="请输入问题">
+        </div>
+
+        <div class="form-group add-input-group">
+            <div style="flex:1;">
+                <label>分类</label>
+                <select id="category"></select>
+            </div>
+            <div style="flex:1;">
+                <label>新增分类</label>
+                <input type="text" id="newCategory" placeholder="输入新分类">
+            </div>
+            <button onclick="addCategory()">添加</button>
+        </div>
+
+        <div class="form-group add-input-group">
+            <div style="flex:1;">
+                <label>公司</label>
+                <select id="company"></select>
+            </div>
+            <div style="flex:1;">
+                <label>新增公司</label>
+                <input type="text" id="newCompany" placeholder="输入新公司">
+            </div>
+            <button onclick="addCompany()">添加</button>
+        </div>
+
+        <div class="form-group add-input-group">
+            <div style="flex:1;">
+                <label>岗位</label>
+                <select id="position"></select>
+            </div>
+            <div style="flex:1;">
+                <label>新增岗位</label>
+                <input type="text" id="newPosition" placeholder="输入新岗位">
+            </div>
+            <button onclick="addPosition()">添加</button>
+        </div>
+
+        <div class="form-group">
+            <label>重要程度</label>
+            <select id="importance">
+                <option value="高">高</option>
+                <option value="中" selected>中</option>
+                <option value="低">低</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>答案</label>
+            <textarea id="answer" placeholder="填写答案"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>知识点</label>
+            <input type="text" id="knowledge" placeholder="用逗号分隔">
+        </div>
+
+        <button onclick="saveQuestion()">保存问题</button>
+        <div id="matchTip" class="match-tip" style="display:none;"></div>
+    </div>
+
+    <!-- 相似问题弹窗 -->
+    <div class="modal-overlay" id="simModal">
+        <div class="modal-box">
+            <h3>⚠️ 检测到近似问题</h3>
+            <div class="modal-similar-card">
+                <span class="sim-score" id="simScore"></span>
+                <div class="sim-q" id="simQuestion"></div>
+                <div class="sim-a" id="simAnswer"></div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-merge" onclick="handleSim('merge')">✅ 合并问题（频次+1）</button>
+                <button class="btn-answer" onclick="handleSim('mergeAnswer')">📝 合并答案</button>
+                <button class="btn-link" onclick="handleSim('link')">🔗 关联问题</button>
+                <button class="btn-new" onclick="handleSim('new')">➕ 另存为新问题</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>已保存问题</h2>
+        <div class="search-box">
+            <input id="searchInput" placeholder="关键词搜索">
+            <button onclick="doSearch()">搜索</button>
+            <button onclick="resetFilter()">重置</button>
+        </div>
+
+        <div class="filter-row">
+            <select id="filterCompany" onchange="doFilter()"></select>
+            <select id="filterPosition" onchange="doFilter()"></select>
+            <select id="filterCategory" onchange="doFilter()"></select>
+        </div>
+
+        <div style="margin:10px 0;">
+            <button onclick="sortByCount()">按频次</button>
+            <button onclick="sortByImportance()">按重要</button>
+            <button onclick="sortByCategory()">按分类</button>
+        </div>
+
+        <div id="questionList"></div>
+    </div>
+
+    <script>
+        // ========== Firebase 云端存储 ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYA-KYNchPSZeYI4MgbWvK3MEX_0Isx20",
+            authDomain: "internprep-3980f.firebaseapp.com",
+            projectId: "internprep-3980f",
+            storageBucket: "internprep-3980f.firebasestorage.app",
+            messagingSenderId: "477226136706",
+            appId: "1:477226136706:web:a347af708ce255f681f09b"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const DATA_DOC = db.collection('appData').doc('main');
+        let cloudReady = false;
+
+        function updateSyncStatus(text, color) {
+            const el = document.getElementById('syncStatus');
+            if (el) { el.textContent = text; el.style.color = color; }
+        }
+
+        async function loadFromCloud() {
+            try {
+                const snap = await DATA_DOC.get();
+                const needsSync = localStorage.getItem('needsSync') === 'true';
+
+                if (snap.exists) {
+                    if (needsSync) {
+                        // 本地有离线修改的数据，优先将本地同步到云端
+                        cloudReady = true;
+                        await syncToCloud(true);
+                    } else {
+                        // 拉取云端数据
+                        const d = snap.data();
+                        questions = d.questions || [];
+                        categories = d.categories || categories;
+                        companies = d.companies || companies;
+                        positions = d.positions || positions;
+                        showList = [...questions];
+                        localStorage.setItem('questions', JSON.stringify(questions));
+                        localStorage.setItem('categories', JSON.stringify(categories));
+                        localStorage.setItem('companies', JSON.stringify(companies));
+                        localStorage.setItem('positions', JSON.stringify(positions));
+                        cloudReady = true;
+                        updateSyncStatus('已连接 ☁️', '#198754');
+                    }
+                } else {
+                    cloudReady = true;
+                    await syncToCloud(true);
+                }
+            } catch (e) {
+                console.warn('云端加载失败，使用本地数据', e);
+                updateSyncStatus('离线模式', '#dc3545');
+            }
+            renderSelects();
+            renderFilterSelects();
+            refreshList();
+        }
+
+        async function syncToCloud(force = false) {
+            if (!cloudReady && !force) {
+                // 离线状态下保存，标记需要后续同步
+                localStorage.setItem('needsSync', 'true');
+                return;
+            }
+            try {
+                updateSyncStatus('同步中...', '#0d6efd');
+                await DATA_DOC.set({
+                    questions, categories, companies, positions,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                localStorage.removeItem('needsSync');
+                updateSyncStatus('已同步 ☁️', '#198754');
+            } catch (e) {
+                console.warn('云端同步失败', e);
+                localStorage.setItem('needsSync', 'true');
+                updateSyncStatus('同步失败 ⚠️', '#dc3545');
+            }
+        }
+
+        // ========== 本地数据 ==========
+        let questions = JSON.parse(localStorage.getItem('questions')) || [];
+
+        let categories = JSON.parse(localStorage.getItem('categories')) ||
+            ["统计学基础", "机器学习", "Python编程", "数据结构", "算法题", "业务分析"];
+
+        let companies = JSON.parse(localStorage.getItem('companies')) ||
+            ["字节", "小红书", "腾讯", "京东"];
+
+        let positions = JSON.parse(localStorage.getItem('positions')) ||
+            ["数分/数科", "风控", "产品经理", "算法"];
+
+        let editId = null;
+        let showList = [...questions];
+
+        // ========== 初始化 ==========
+        window.onload = () => {
+            loadFromCloud();
+        };
+
+        window.addEventListener('online', async () => {
+            updateSyncStatus('网络恢复，检查同步...', '#0d6efd');
+            await loadFromCloud();
+        });
+
+        window.addEventListener('offline', () => {
+            cloudReady = false;
+            updateSyncStatus('离线模式', '#dc3545');
+        });
+
+        // 渲染下拉框
+        function renderSelects() {
+            renderListToSelect(categories, 'category');
+            renderListToSelect(companies, 'company');
+            renderListToSelect(positions, 'position');
+        }
+        function renderFilterSelects() {
+            renderListToSelect(['全部公司', ...companies], 'filterCompany');
+            renderListToSelect(['全部岗位', ...positions], 'filterPosition');
+            renderListToSelect(['全部分类', ...categories], 'filterCategory');
+        }
+        function renderListToSelect(list, id) {
+            const el = document.getElementById(id);
+            el.innerHTML = '';
+            list.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item;
+                opt.textContent = item;
+                el.appendChild(opt);
+            });
+        }
+
+        // ========== 新增选项 ==========
+        function addCategory() {
+            const v = document.getElementById('newCategory').value.trim();
+            if (v && !categories.includes(v)) {
+                categories.push(v);
+                localStorage.setItem('categories', JSON.stringify(categories));
+                renderSelects(); renderFilterSelects();
+                document.getElementById('newCategory').value = '';
+                syncToCloud();
+            }
+        }
+        function addCompany() {
+            const v = document.getElementById('newCompany').value.trim();
+            if (v && !companies.includes(v)) {
+                companies.push(v);
+                localStorage.setItem('companies', JSON.stringify(companies));
+                renderSelects(); renderFilterSelects();
+                document.getElementById('newCompany').value = '';
+                syncToCloud();
+            }
+        }
+        function addPosition() {
+            const v = document.getElementById('newPosition').value.trim();
+            if (v && !positions.includes(v)) {
+                positions.push(v);
+                localStorage.setItem('positions', JSON.stringify(positions));
+                renderSelects(); renderFilterSelects();
+                document.getElementById('newPosition').value = '';
+                syncToCloud();
+            }
+        }
+
+        // ========== 保存/编辑 ==========
+        let _pendingData = null;  // 待保存的新问题数据
+        let _simTarget = null;  // 检测到的近似问题对象
+
+        function saveQuestion() {
+            const t = document.getElementById('question').value.trim();
+            if (!t) return alert('请输入问题');
+
+            const data = {
+                text: t,
+                category: document.getElementById('category').value,
+                company: document.getElementById('company').value,
+                position: document.getElementById('position').value,
+                importance: document.getElementById('importance').value,
+                answer: document.getElementById('answer').value.trim(),
+                knowledge: document.getElementById('knowledge').value.trim(),
+            };
+
+            if (editId) {
+                // 编辑模式：直接保存
+                const idx = questions.findIndex(x => x.id === editId);
+                questions[idx] = { ...questions[idx], ...data };
+                editId = null;
+                commitSave();
+                return;
+            }
+
+            const simResult = findSimilar(t);
+            if (simResult) {
+                // 弹出弹窗让用户选择
+                _pendingData = { ...data, count: 1, id: Date.now() };
+                _simTarget = simResult.q;
+                const pct = Math.round(simResult.score * 100);
+                document.getElementById('simScore').textContent = `相似度 ${pct}%`;
+                document.getElementById('simQuestion').textContent = '问题：' + _simTarget.text;
+                document.getElementById('simAnswer').textContent = _simTarget.answer ? '已有答案：' + _simTarget.answer : '（无已有答案）';
+                document.getElementById('simModal').classList.add('active');
+            } else {
+                // 无近似，直接保存
+                questions.push({ ...data, count: 1, id: Date.now() });
+                commitSave();
+            }
+        }
+
+        function handleSim(action) {
+            document.getElementById('simModal').classList.remove('active');
+            if (action === 'merge') {
+                // 合并问题：频次+1，不保存新问题
+                _simTarget.count++;
+            } else if (action === 'mergeAnswer') {
+                // 合并答案：频次+1，追加答案
+                _simTarget.count++;
+                if (_pendingData.answer) {
+                    _simTarget.answer = _simTarget.answer
+                        ? _simTarget.answer + '\n\n---补充---\n' + _pendingData.answer
+                        : _pendingData.answer;
+                }
+            } else if (action === 'link') {
+                // 关联问题：挂在近似问题下方
+                _pendingData.relatedTo = _simTarget.id;
+                questions.push(_pendingData);
+            } else {
+                // 另存为新问题
+                questions.push(_pendingData);
+            }
+            commitSave();
+        }
+
+        function commitSave() {
+            localStorage.setItem('questions', JSON.stringify(questions));
+            showList = [...questions];
+            resetForm();
+            refreshList();
+            syncToCloud();
+        }
+
+        function findSimilar(text) {
+            const th = 0.25;
+            let best = null, bestScore = 0;
+            for (const q of questions) {
+                if (q.relatedTo) continue;
+                const s = simScore(text, q.text);
+                if (s >= th && s > bestScore) { best = q; bestScore = s; }
+            }
+            return best ? { q: best, score: bestScore } : null;
+        }
+
+        // 停用词：会出现在各种问题里的通用词汇
+        const STOP_CHARS = new Set([...'的是在了吗呢吧啊哪什么怎么如何为什么请问一下有没有和与跟区别不同相同比较可以能够']);
+
+        function simScore(a, b) {
+            // 去停用词 → 提取 bigram → Jaccard
+            const clean = s => [...s].filter(c => !STOP_CHARS.has(c)).join('');
+            const bigrams = s => {
+                const t = clean(s);
+                const set = new Set();
+                for (let i = 0; i < t.length - 1; i++) set.add(t[i] + t[i + 1]);
+                return set;
+            };
+            const s1 = bigrams(a), s2 = bigrams(b);
+            if (s1.size === 0 || s2.size === 0) return 0;
+            const same = [...s1].filter(x => s2.has(x)).length;
+            return same / (s1.size + s2.size - same);
+        }
+
+        function editQuestion(id) {
+            const q = questions.find(x => x.id === id);
+            if (!q) return;
+            document.getElementById('question').value = q.text;
+            document.getElementById('category').value = q.category;
+            document.getElementById('company').value = q.company;
+            document.getElementById('position').value = q.position;
+            document.getElementById('importance').value = q.importance;
+            document.getElementById('answer').value = q.answer || '';
+            document.getElementById('knowledge').value = q.knowledge || '';
+            editId = id;
+            window.scrollTo(0, 0);
+        }
+
+        function deleteQuestion(id) {
+            if (!confirm('确定删除？')) return;
+            questions = questions.filter(x => x.id !== id);
+            localStorage.setItem('questions', JSON.stringify(questions));
+            showList = showList.filter(x => x.id !== id);
+            refreshList();
+            syncToCloud();
+        }
+
+        function resetForm() {
+            document.getElementById('question').value = '';
+            document.getElementById('answer').value = '';
+            document.getElementById('knowledge').value = '';
+            document.getElementById('importance').value = '中';
+        }
+
+        // ========== 搜索 & 筛选 ==========
+        function doSearch() {
+            const kw = document.getElementById('searchInput').value.toLowerCase();
+            showList = questions.filter(q =>
+                q.text.toLowerCase().includes(kw) ||
+                q.company?.toLowerCase().includes(kw) ||
+                q.position?.toLowerCase().includes(kw) ||
+                q.category.toLowerCase().includes(kw)
+            );
+            refreshList();
+        }
+
+        function doFilter() {
+            const fc = document.getElementById('filterCompany').value;
+            const fp = document.getElementById('filterPosition').value;
+            const fca = document.getElementById('filterCategory').value;
+
+            showList = questions.filter(q => {
+                const okC = fc === '全部公司' || q.company === fc;
+                const okP = fp === '全部岗位' || q.position === fp;
+                const okCa = fca === '全部分类' || q.category === fca;
+                return okC && okP && okCa;
+            });
+            refreshList();
+        }
+
+        function resetFilter() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterCompany').value = '全部公司';
+            document.getElementById('filterPosition').value = '全部岗位';
+            document.getElementById('filterCategory').value = '全部分类';
+            showList = [...questions];
+            refreshList();
+        }
+
+        // ========== 排序 ==========
+        function sortByCount() { showList.sort((a, b) => b.count - a.count); refreshList(); }
+        function sortByCategory() { showList.sort((a, b) => a.category.localeCompare(b.category)); refreshList(); }
+        function sortByImportance() {
+            const order = { 高: 3, 中: 2, 低: 1 };
+            showList.sort((a, b) => order[b.importance] - order[a.importance]);
+            refreshList();
+        }
+
+        // ========== 界面刷新 ==========
+        function renderQuestionCard(q, isRelated) {
+            const div = document.createElement('div');
+            div.className = isRelated ? 'related-item' : 'question-item';
+            const impCls = { 高: 'tag-important-high', 中: 'tag-important-mid', 低: 'tag-important-low' }[q.importance];
+            div.innerHTML = `
+            <h4>${isRelated ? '🔗 ' : ''}${q.text} <span class="count">(${q.count}次)</span></h4>
+            <p>分类：<span class="tag">${q.category}</span>${isRelated ? ' <span style="color:#0d6efd;font-size:11px;">（关联问题）</span>' : ''}</p>
+            <p>公司：${q.company || '-'} ｜ 岗位：${q.position || '-'}</p>
+            <p>重要：<span class="tag ${impCls}">${q.importance}</span></p>
+            <p>答案：${q.answer || '无'}</p>
+            <p>知识点：${q.knowledge || '无'}</p>
+            <button class="edit-btn" onclick="editQuestion(${q.id})">编辑</button>
+            <button class="delete-btn" onclick="deleteQuestion(${q.id})">删除</button>
+        `;
+            return div;
+        }
+
+        function refreshList() {
+            const el = document.getElementById('questionList');
+            el.innerHTML = '';
+            // 只渲染顶级（非关联）问题，关联问题跟随父问题
+            const topList = showList.filter(q => !q.relatedTo);
+            topList.forEach(q => {
+                el.appendChild(renderQuestionCard(q, false));
+                // 找到所有关联到该问题的子问题
+                const children = questions.filter(c => c.relatedTo === q.id);
+                children.forEach(c => {
+                    el.appendChild(renderQuestionCard(c, true));
+                });
+            });
+        }
+    </script>
+</body>
+
+</html>
